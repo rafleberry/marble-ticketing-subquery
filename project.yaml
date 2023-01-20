@@ -1,0 +1,54 @@
+specVersion: 1.0.0
+name: juno-subql-starter
+version: 0.0.1
+runner:
+  node:
+    name: "@subql/node-cosmos"
+    version: "*"
+  query:
+    name: "@subql/query"
+    version: "*"
+description: >-
+  This project can be use as a starting point for developing your Cosmos (Juno) based SubQuery project
+repository: https://github.com/subquery/juno-subql-starter
+schema:
+  file: ./schema.graphql
+
+network:
+  chainId: juno-1
+  # This endpoint must be a public non-pruned archive node
+  # Public nodes may be rate limited, which can affect indexing speed
+  # When developing your project we suggest getting a private API key
+  # You can get them from OnFinality for free https://app.onfinality.io
+  # https://documentation.onfinality.io/support/the-enhanced-api-service
+  endpoint: https://juno.api.onfinality.io/rpc?apikey=a6fd55d0-ef12-44e9-98fd-939cd364a342
+  # Optionally provide the HTTP endpoint of a full chain dictionary to speed up processing
+  dictionary: https://api.subquery.network/sq/subquery/cosmos-juno-dictionary
+
+dataSources:
+  - kind: cosmos/Runtime
+    startBlock: 6562650 # first block on the fourth iteration of juno
+    #chainTypes: # This is a beta feature that allows support for any Cosmos chain by importing the correct protobuf messages
+    #  cosmos.slashing.v1beta1:
+    #    file: "./proto/cosmos/slashing/v1beta1/tx.proto"
+    #    messages:
+    #     - "MsgUnjail"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleCollectionEvent
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm
+            attributes:
+              _contract_address: "juno1yy38kftj053myjuznf8x89zhgsu4lse6l2tug0d7wl9efhunldtqn47ej3"
+        - handler: handleNFTEvent
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm
+        - handler: handleMarketplaceEvent
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm
+            attributes:
+              _contract_address: "juno1k799zl0wt7wkuuxnwgeuvatj4ljsqnk0zm4s8hjmkdvx23eayhlsn3pwc0"

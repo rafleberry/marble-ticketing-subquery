@@ -1,0 +1,40 @@
+# To improve query performance, we strongly suggest adding indexes to any field that you plan to filter or sort by
+# Add the `@index` or `@index(unique: true)` annotation after any non-key field
+# https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
+
+type CollectionEntity @entity {
+  id: ID!
+  name: String
+  creator: String
+  category: String
+  collection_id: String
+  uri: String
+  createdTime: BigInt
+}
+
+type NftEntity @entity {
+  id: ID!
+  name: String
+  image_url: String
+  creator: String
+  owner: String
+  collection: CollectionEntity
+  createdTime: BigInt
+}
+type BidType @jsonField {
+  bidder: String!
+  amount: BigInt!
+}
+
+type MarketplaceEntity @entity {
+  id: ID!
+  type: String
+  price: BigInt
+  reserve_price: BigInt
+  denom: String
+  start: BigInt
+  end: BigInt
+  nft_info: NftEntity
+  bids: Int
+  createdTime: BigInt
+}
