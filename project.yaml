@@ -1,5 +1,5 @@
 specVersion: 1.0.0
-name: juno-subql-starter
+name: marble-nft
 version: 0.0.1
 runner:
   node:
@@ -9,8 +9,8 @@ runner:
     name: "@subql/query"
     version: "*"
 description: >-
-  This project can be use as a starting point for developing your Cosmos (Juno) based SubQuery project
-repository: https://github.com/subquery/juno-subql-starter
+  This project is for marble nft marketplace
+repository: https://github.com/rafleberry/marble-juno-subquery
 schema:
   file: ./schema.graphql
 
@@ -21,13 +21,17 @@ network:
   # When developing your project we suggest getting a private API key
   # You can get them from OnFinality for free https://app.onfinality.io
   # https://documentation.onfinality.io/support/the-enhanced-api-service
-  endpoint: https://juno.api.onfinality.io/rpc?apikey=a6fd55d0-ef12-44e9-98fd-939cd364a342
+  # endpoint: https://juno.api.onfinality.io/rpc?apikey=77857fd8-69bf-4750-b153-d89017afc45d #testnet
+  # endpoint: https://juno.api.onfinality.io/rpc?apikey=a6fd55d0-ef12-44e9-98fd-939cd364a342
+  endpoint: https://rpc-juno.itastakers.com:443
+  # endpoint: https://rpc-juno.whispernode.com:443
   # Optionally provide the HTTP endpoint of a full chain dictionary to speed up processing
   dictionary: https://api.subquery.network/sq/subquery/cosmos-juno-dictionary
 
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 6562650 # first block on the fourth iteration of juno
+    # startBlock: 7573061 # first block on the fourth iteration of juno --test
+    startBlock: 8240000 # first block on the fourth iteration of juno
     #chainTypes: # This is a beta feature that allows support for any Cosmos chain by importing the correct protobuf messages
     #  cosmos.slashing.v1beta1:
     #    file: "./proto/cosmos/slashing/v1beta1/tx.proto"
@@ -41,14 +45,16 @@ dataSources:
           filter:
             type: wasm
             attributes:
-              _contract_address: "juno1yy38kftj053myjuznf8x89zhgsu4lse6l2tug0d7wl9efhunldtqn47ej3"
+              _contract_address: "juno1xdh5m6l6cuzzptgfezlk0ajy3alp4ck549fjcsm9dxys9vyv3uxqjvw7e3" #test
+              # _contract_address: "juno1v3qljym3z783c8wgt9ud73sznxdz54ucyrp0t8kxmq29rm8deswq87ns4l"
         - handler: handleNFTEvent
           kind: cosmos/EventHandler
           filter:
             type: wasm
-        - handler: handleMarketplaceEvent
-          kind: cosmos/EventHandler
-          filter:
-            type: wasm
-            attributes:
-              _contract_address: "juno1k799zl0wt7wkuuxnwgeuvatj4ljsqnk0zm4s8hjmkdvx23eayhlsn3pwc0"
+        # - handler: handleMarketplaceEvent
+        #   kind: cosmos/EventHandler
+        #   filter:
+        #     type: wasm
+        #     attributes:
+        #       # _contract_address: "juno150ntpldsesqhuku6jah4drstlxud7ypkzgv6qdasv93x5afj3t0q6fg85w" #test
+        #       _contract_address: "juno1lcr3p29wqgtd9qkev2g4dy263fufpj8sgu750tuj7e289z0nygrs7zftmz"

@@ -28,6 +28,10 @@ export class NftEntity implements Entity {
 
     public createdTime?: bigint;
 
+    public vr_uri?: string;
+
+    public ar_uri?: string;
+
 
     async save(): Promise<void>{
         let id = this.id;

@@ -2,14 +2,17 @@
 # Add the `@index` or `@index(unique: true)` annotation after any non-key field
 # https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
 
-type CollectionEntity @entity {
+type EventEntity @entity {
   id: ID!
-  name: String
-  creator: String
-  category: String
-  collection_id: String
-  uri: String
-  createdTime: BigInt
+  address: String!
+  creator: String!
+  start_time: BigInt!
+  end_time: BigInt!
+  name: String!
+  img: String!
+  denom: String!
+  place: String!
+  updated_time: BigInt!
 }
 
 type NftEntity @entity {
@@ -18,8 +21,10 @@ type NftEntity @entity {
   image_url: String
   creator: String
   owner: String
-  collection: CollectionEntity
+  collection: EventEntity
   createdTime: BigInt
+  vr_uri: String
+  ar_uri: String
 }
 type BidType @jsonField {
   bidder: String!
@@ -37,4 +42,13 @@ type MarketplaceEntity @entity {
   nft_info: NftEntity
   bids: Int
   createdTime: BigInt
+  owner: String
+  creator: String
+  pending_status: Boolean
+  buyer_id: String
+}
+
+type LogEntity @entity {
+  id: ID!
+  log: String!
 }

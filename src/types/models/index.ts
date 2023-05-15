@@ -2,9 +2,11 @@
 
 // Auto-generated , DO NOT EDIT
 
-export {CollectionEntity} from "./CollectionEntity"
+export {EventEntity} from "./EventEntity"
 
 export {NftEntity} from "./NftEntity"
 
 export {MarketplaceEntity} from "./MarketplaceEntity"
+
+export {LogEntity} from "./LogEntity"
 

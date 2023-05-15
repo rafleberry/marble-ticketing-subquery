@@ -34,6 +34,14 @@ export class MarketplaceEntity implements Entity {
 
     public createdTime?: bigint;
 
+    public owner?: string;
+
+    public creator?: string;
+
+    public pending_status?: boolean;
+
+    public buyer_id?: string;
+
 
     async save(): Promise<void>{
         let id = this.id;
