@@ -31,10 +31,11 @@ services:
       DB_PORT: 5432
     volumes:
       - ./:/app
-    command:
+    command: 
+      - ${SUB_COMMAND} # set SUB_COMMAND env variable to "test" to run tests
       - -f=/app
       - --db-schema=app
-      - --disable-historical=false
+      - --store-cache-threshold=1
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
