@@ -1,13 +1,11 @@
-import { 
-  NftEntity, 
-  BidType, 
+import {
+  NftEntity,
+  BidType,
   MarketplaceEntity,
   EventEntity,
   LogEntity,
 } from "../types";
-import {
-  CosmosEvent,
-} from "@subql/types-cosmos";
+import { CosmosEvent } from "@subql/types-cosmos";
 import { Attribute } from "@cosmjs/stargate/build/logs";
 
 const factoryDefaultResponse = {
@@ -15,16 +13,16 @@ const factoryDefaultResponse = {
   address: "",
   creator: "",
   event_id: "",
-  start_time:"",
-  end_time:"",
+  start_time: "",
+  end_time: "",
   name: "",
   img: "",
   denom: "",
-  place: ""
-}
+  place: "",
+};
 const nftDefaultResponse = {
   _contract_address: "",
-  minter:"",
+  minter: "",
   owner: "",
   img_url: "",
   token_id: "",
@@ -33,35 +31,39 @@ const nftDefaultResponse = {
   recipient: "",
   vr_uri: "",
   ar_uri: "",
-}
+};
 const marketDefaultResponse = {
   "marble-action": "",
   denom: "",
   nft_address: "",
   token_id: "",
   sale_type: "",
-  initial_price:"",
+  initial_price: "",
   reserve_price: "",
   start: "",
   end: "",
   bidder: "",
   price: "",
   "marble-sender": "",
-  "marble-recipient":"",
+  "marble-recipient": "",
   buyer_id: "",
   pending_status: false,
-  category: ""
-}
+  category: "",
+};
 
 export async function handleCollectionEvent(event: CosmosEvent): Promise<void> {
+  logger.info(
+    "new collection event at block " +
+      event.block.block.header.height.toString()
+  );
   const attr = event.event.attributes;
   const logEntity = LogEntity.create({
     id: Date.now().toString(),
-    log: JSON.stringify(attr)
-  })
+    log: JSON.stringify(attr),
+  });
   await logEntity.save();
-  const data = await parseAttributes(attr,factoryDefaultResponse);
-  if(data.factory_action=="add_event") {
+  const data = await parseAttributes(attr, factoryDefaultResponse);
+  if (data.factory_action == "add_event") {
     const collectionEntity = EventEntity.create({
       id: data.event_id,
       name: data.name,
@@ -72,8 +74,8 @@ export async function handleCollectionEvent(event: CosmosEvent): Promise<void> {
       img: data.img,
       denom: data.denom,
       place: data.place,
-      updated_time: BigInt(Date.now())
-    })
+      updated_time: BigInt(Date.now()),
+    });
     await collectionEntity.save();
     return;
   }
@@ -97,7 +99,6 @@ export async function handleNFTEvent(event: CosmosEvent): Promise<void> {
   // }
   // if(collection_data == undefined) return;
   // const nft_id = data._contract_address+":"+data.token_id;
-
   // if(data.action=="mint") {
   //   const nftEntity = NftEntity.create({
   //     id: nft_id,
@@ -123,17 +124,19 @@ export async function handleNFTEvent(event: CosmosEvent): Promise<void> {
   //   return;
   // }
 }
-export async function handleMarketplaceEvent(event: CosmosEvent): Promise<void> {
+export async function handleMarketplaceEvent(
+  event: CosmosEvent
+): Promise<void> {
   const attr = event.event.attributes;
-  const data = await parseAttributes(attr,marketDefaultResponse);
-  const nft_id = data.nft_address+":"+data.token_id;
+  const data = await parseAttributes(attr, marketDefaultResponse);
+  const nft_id = data.nft_address + ":" + data.token_id;
   const nftInfo = await NftEntity.get(nft_id);
 
-  if(data["marble-action"]=="start_sale") {
-    let owner="";
+  if (data["marble-action"] == "start_sale") {
+    let owner = "";
     let creator = "";
-    if(nftInfo) {
-      owner=nftInfo.owner;
+    if (nftInfo) {
+      owner = nftInfo.owner;
       creator = nftInfo.creator;
     }
     const marketplaceEntity = MarketplaceEntity.create({
@@ -144,50 +147,50 @@ export async function handleMarketplaceEvent(event: CosmosEvent): Promise<void> 
       denom: data.denom,
       start: BigInt(data.start),
       end: BigInt(data.end),
-      nft_infoId:nft_id,
+      nft_infoId: nft_id,
       createdTime: BigInt(Date.now()),
       bids: 0,
       owner: owner,
-      creator: creator
-    })
+      creator: creator,
+    });
     await marketplaceEntity.save();
     return;
   }
-  if(data["marble-action"]=="add_bid") {
+  if (data["marble-action"] == "add_bid") {
     let marketplaceEntity = await MarketplaceEntity.get(nft_id);
-    if(marketplaceEntity==undefined) return;
+    if (marketplaceEntity == undefined) return;
     let bids = marketplaceEntity.bids;
-    marketplaceEntity.bids = bids+1;
+    marketplaceEntity.bids = bids + 1;
     await marketplaceEntity.save();
     return;
   }
-  if(data["marble-action"]=="cancel_bid") {
+  if (data["marble-action"] == "cancel_bid") {
     let marketplaceEntity = await MarketplaceEntity.get(nft_id);
-    if(marketplaceEntity==undefined) return;
+    if (marketplaceEntity == undefined) return;
     let bids = marketplaceEntity.bids;
-    marketplaceEntity.bids = bids-1;
+    marketplaceEntity.bids = bids - 1;
     await marketplaceEntity.save();
     return;
   }
-  if(data["marble-action"]=="on_shipping") {
+  if (data["marble-action"] == "on_shipping") {
     let marketplaceEntity = await MarketplaceEntity.get(nft_id);
     marketplaceEntity.price = BigInt(data.price);
     marketplaceEntity.buyer_id = data.buyer_id;
     await marketplaceEntity.save();
   }
-  if(data["marble-action"]=="cancel_sale") {
+  if (data["marble-action"] == "cancel_sale") {
     await MarketplaceEntity.remove(nft_id);
     return;
   }
-  if(data["marble-action"]=="accept_sale") {
+  if (data["marble-action"] == "accept_sale") {
     await MarketplaceEntity.remove(nft_id);
     return;
   }
-  if(data["marble-action"]=="fixed_sell") {
+  if (data["marble-action"] == "fixed_sell") {
     await MarketplaceEntity.remove(nft_id);
     return;
   }
-  if(data["marble-action"]=="finish_sale") {
+  if (data["marble-action"] == "finish_sale") {
     await MarketplaceEntity.remove(nft_id);
     return;
   }
@@ -199,7 +202,7 @@ const parseAttributes = async (
   let data = defaultResponse;
   attr.map(({ key, value }) => {
     let obj = {};
-    obj =  { [key]: value };
+    obj = { [key]: value };
     data = { ...data, ...obj };
   });
 
