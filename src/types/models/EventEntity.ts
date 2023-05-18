@@ -16,7 +16,7 @@ export class EventEntity implements Entity {
 
     public id: string;
 
-    public address: string;
+    public event_id: string;
 
     public creator: string;
 

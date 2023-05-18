@@ -16,21 +16,15 @@ export class NftEntity implements Entity {
 
     public id: string;
 
-    public name?: string;
+    public event_id: string;
 
-    public image_url?: string;
+    public minter: string;
 
-    public creator?: string;
+    public owner: string;
 
-    public owner?: string;
+    public ticket_type: string;
 
-    public collectionId?: string;
-
-    public createdTime?: bigint;
-
-    public vr_uri?: string;
-
-    public ar_uri?: string;
+    public event_infoId: string;
 
 
     async save(): Promise<void>{
@@ -54,9 +48,9 @@ export class NftEntity implements Entity {
     }
 
 
-    static async getByCollectionId(collectionId: string): Promise<NftEntity[] | undefined>{
+    static async getByEvent_infoId(event_infoId: string): Promise<NftEntity[] | undefined>{
       
-      const records = await store.getByField('NftEntity', 'collectionId', collectionId);
+      const records = await store.getByField('NftEntity', 'event_infoId', event_infoId);
       return records.map(record => this.create(record as NftEntityProps));
       
     }

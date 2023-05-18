@@ -4,7 +4,7 @@
 
 type EventEntity @entity {
   id: ID!
-  address: String!
+  event_id: String!
   creator: String!
   start_time: BigInt!
   end_time: BigInt!
@@ -17,14 +17,11 @@ type EventEntity @entity {
 
 type NftEntity @entity {
   id: ID!
-  name: String
-  image_url: String
-  creator: String
+  event_id: String!
+  minter: String
   owner: String
-  collection: EventEntity
-  createdTime: BigInt
-  vr_uri: String
-  ar_uri: String
+  ticket_type: String!
+  event_info: EventEntity!
 }
 type BidType @jsonField {
   bidder: String!
